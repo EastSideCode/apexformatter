@@ -1,0 +1,93 @@
+{
+  "config": {
+    "max_width": 80,
+    "indent_size": 4
+  },
+  "cases": [
+    {
+      "name": "simple",
+      "source": "public class Demo{public Integer value=1; public void work(){Integer x=2;x+=value;}}",
+      "expected": "public class Demo {\n    public Integer value = 1;\n    public void work() {\n        Integer x = 2;\n        x += value;\n    }\n}\n"
+    },
+    {
+      "name": "annotations",
+      "source": "@IsTest(isParallel=true) private class Demo { @TestVisible private static Map<String,List<Integer>> values=new Map<String,List<Integer>>(); @IsTest static void testIt(){Assert.isTrue(true);}}",
+      "expected": "@IsTest(isParallel=true)\nprivate class Demo {\n    @TestVisible\n    private static Map<String, List<Integer>> values =\n            new Map<String, List<Integer>>();\n    @IsTest\n    static void testIt() {\n        Assert.isTrue(true);\n    }\n}\n"
+    },
+    {
+      "name": "classes",
+      "source": "public with sharing class Demo extends Base implements First,Second{public class Inner{public Inner(){}} public Demo(){this(1);} public Demo(Integer n){super(); this.value=n;} private Integer value;}",
+      "expected": "public with sharing class Demo extends Base implements First, Second {\n    public class Inner {\n        public Inner() {\n        }\n    }\n    public Demo() {\n        this(1);\n    }\n    public Demo(Integer n) {\n        super();\n    this.value = n;\n    }\n    private Integer value;\n}\n"
+    },
+    {
+      "name": "parameters",
+      "source": "public class Demo{public virtual List<Account> find(String name,Integer limitSize){return new List<Account>();} public override void run(){}}",
+      "expected": "public class Demo {\n    public virtual List<Account> find(String name, Integer limitSize) {\n        return new List<Account>();\n    }\n    public override void run() {\n    }\n}\n"
+    },
+    {
+      "name": "loops",
+      "source": "public class Demo{void run(){for(Integer i=0;i<10;i++){if(i==3)continue;else if(i==4){break;}else i++;} for(Account a:accounts) a.Name='New'; while(flag){call();} do{flag=false;}while(flag);}}",
+      "expected": "public class Demo {\n    void run() {\n        for (Integer i = 0; i < 10; i++) {\n            if (i == 3)\n                continue;\n            else if (i == 4) { break; }\n            else\n                i++;\n        }\n        for (Account a : accounts) a.Name = 'New';\n        while (flag) { call(); }\n        do { flag = false; }\n        while (flag);\n    }\n}\n"
+    },
+    {
+      "name": "branches",
+      "source": "public class Demo{Integer test(Integer a,Integer b){if(a>b)return a;else return b;}}",
+      "expected": "public class Demo {\n    Integer test(Integer a, Integer b) {\n        if (a > b)\n            return a;\n        else\n            return b;\n    }\n}\n"
+    },
+    {
+      "name": "binary",
+      "source": "public class Demo{Integer run(){Integer x=a+b*c-d;Boolean c=(a==b)&&(b!=c)||flag;return a+b*c;}}",
+      "expected": "public class Demo {\n    Integer run() {\n        Integer x = a + b * c - d;\n        Boolean c = (a == b) && (b != c) || flag;\n        return a + b * c;\n    }\n}\n"
+    },
+    {
+      "name": "chains",
+      "source": "public class Demo{void run(){service?.get().items[0].Name='Test';Integer v=service.get().value;}}",
+      "expected": "public class Demo {\n    void run() {\n        service?.get().items[0].Name = 'Test';\n        Integer v = service.get().value;\n    }\n}\n"
+    },
+    {
+      "name": "initializers",
+      "source": "public class Demo{void run(){Integer[] a=new Integer[]{1,2,3};Integer[] b=new Integer[2];Map<String,Integer> x=new Map<String,Integer>{'a'=>1,'b'=>2};}}",
+      "expected": "public class Demo {\n    void run() {\n        Integer[] a = new Integer[]{ 1, 2, 3 };\n        Integer[] b = new Integer[2];\n        Map<String, Integer> x = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };\n    }\n}\n"
+    },
+    {
+      "name": "errors",
+      "source": "public class Demo{void run(){try{throw new Exception('x');}catch(Exception e){log(e);}finally{cleanup();}}}",
+      "expected": "public class Demo {\n    void run() {\n        try { throw new Exception('x'); }\n        catch (Exception e) { log(e); }\n        finally { cleanup(); }\n    }\n}\n"
+    },
+    {
+      "name": "accessors",
+      "source": "public class Demo{public Integer value{get;private set;} public String other{get{return field;}set{field=value;}} static{ready=true;}}",
+      "expected": "public class Demo {\n    public Integer value { get; private set; }\n    public String other {\n        get { return field; }\n        set { field = value; }\n    }\n    static {\n        ready = true;\n    }\n}\n"
+    },
+    {
+      "name": "enum",
+      "source": "public enum Color{RED,BLUE,GREEN}",
+      "expected": "public enum Color {\n        RED,\n        BLUE,\n        GREEN\n}\n"
+    },
+    {
+      "name": "interface",
+      "source": "public interface Demo extends One,Two{void run();Integer value=1;public enum Choice{A,B}}",
+      "expected": "public interface Demo extends One, Two {\n    void run();\n    Integer value = 1;\n    public enum Choice {\n            A,\n            B\n    }\n}\n"
+    },
+    {
+      "name": "query",
+      "source": "public class Demo{void run(){List<Account> rows=[SELECT Id,Name FROM Account WHERE Name=:name ORDER BY Name LIMIT 2];}}",
+      "expected": "public class Demo {\n    void run() {\n        List<Account> rows =\n        [\n            SELECT Id, Name\n            FROM Account\n            WHERE Name = :name\n            ORDER BY Name\n            LIMIT 2\n        ];\n    }\n}\n"
+    },
+    {
+      "name": "runas",
+      "source": "@IsTest private class Demo{@IsTest static void run(){System.runAs(user){insert records;}}}",
+      "expected": "@IsTest\nprivate class Demo {\n    @IsTest\n    static void run() {\n        System.runAs(user) { insert records; }\n    }\n}\n"
+    },
+    {
+      "name": "dml",
+      "source": "public class Demo{void run(){insert as user records;upsert records External_Id__c;merge parent child;}}",
+      "expected": "public class Demo {\n    void run() {\n        insert as user records;\n        upsert records External_Id__c;\n        merge parent child;\n    }\n}\n"
+    },
+    {
+      "name": "comments",
+      "source": "// header\npublic class Demo{/* dangling? */Integer value=1; // value\nvoid run(){// body\ncall();}}\n",
+      "expected": "// header\npublic class Demo {\n    /* dangling? */ Integer value = 1; // value\n    void run() {\n        // body\n        call();\n    }\n}\n"
+    }
+  ]
+}

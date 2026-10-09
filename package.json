@@ -1,0 +1,54 @@
+{
+  "name": "sf-plugin-apex-formatter",
+  "version": "0.1.0",
+  "description": "A Ruby-free TypeScript port of Louis Fico's tree-sitter Apex formatter for Salesforce CLI.",
+  "author": "Louis Fico",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EastSideCode/apexformatter.git",
+    "directory": "apexformatter"
+  },
+  "homepage": "https://github.com/EastSideCode/apexformatter#readme",
+  "bugs": {
+    "url": "https://github.com/EastSideCode/apexformatter/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": { "node": ">=20.11.0" },
+  "main": "lib/formatter.js",
+  "types": "lib/formatter.d.ts",
+  "exports": { ".": "./lib/formatter.js", "./engine": "./lib/engine/engine.js" },
+  "files": ["bin", "lib", "messages", "README.md", "LICENSE", "style-guide.xml"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "verify:package": "node scripts/verify-package.mjs",
+    "prepublishOnly": "npm test && npm run verify:package",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@oclif/core": "4.8.0",
+    "@salesforce/core": "8.23.4",
+    "@salesforce/sf-plugins-core": "12.2.5",
+    "fast-xml-parser": "5.11.2",
+    "web-tree-sitter": "0.26.8",
+    "web-tree-sitter-sfapex": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.13.11",
+    "typescript": "5.9.2"
+  },
+  "overrides": {
+    "@jsforce/jsforce-node": "3.10.8"
+  },
+  "oclif": {
+    "bin": "sf",
+    "commands": "./lib/commands",
+    "topicSeparator": " ",
+    "topics": { "apex": { "description": "Format local Apex source." } }
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "name": "nested SOQL",
+    "source": "public class Demo { public void run(Set<Id> ids) { List<Account> a=[select Id,Name,(select Id from Contacts where Name != null order by CreatedDate asc nulls first limit 7) from Account where Id in :ids and (Name = 'A' or Name = 'B') order by Name desc nulls last limit :ids.size() offset 2]; }}",
+    "config": {
+      "max_width": 80,
+      "indent_size": 4
+    },
+    "expected": "public class Demo {\n    public void run(Set<Id> ids) {\n        List<Account> a =\n        [\n            SELECT\n                Id,\n                Name,\n                (\n                        SELECT Id\n                        FROM Contacts\n                        WHERE Name != null\n                        ORDER BY CreatedDate asc nulls first\n                        LIMIT 7\n                )\n            FROM Account\n            WHERE Id in :ids AND (Name = 'A' OR Name = 'B')\n            ORDER BY Name desc nulls last\n            LIMIT :ids.size()\n            OFFSET 2\n        ];\n    }\n}\n"
+  },
+  {
+    "name": "aggregate SOQL",
+    "source": "class Demo { void run() { List<AggregateResult> a=[SELECT AccountId,COUNT(Id) n FROM Opportunity WHERE CreatedDate = LAST_N_DAYS:30 GROUP BY ROLLUP(AccountId) HAVING COUNT(Id) > 2 ORDER BY AccountId LIMIT 10]; }}",
+    "config": {
+      "max_width": 80,
+      "indent_size": 4
+    },
+    "expected": "class Demo {\n    void run() {\n        List<AggregateResult> a =\n        [\n            SELECT AccountId, COUNT(Id) n\n            FROM Opportunity\n            WHERE CreatedDate = LAST_N_DAYS:30\n            GROUP BY ROLLUP(AccountId)\n            HAVING COUNT(Id) > 2\n            ORDER BY AccountId\n            LIMIT 10\n        ];\n    }\n}\n"
+  },
+  {
+    "name": "SOSL return clauses",
+    "source": "class Demo { void run(String term) { List<List<SObject>> a=[FIND :term IN PHONE FIELDS RETURNING Contact(Id,Name WHERE Name != null ORDER BY Name LIMIT 10 OFFSET 1),Account(Id) WITH SPELL_CORRECTION = false LIMIT 20]; }}",
+    "config": {
+      "max_width": 80,
+      "indent_size": 4
+    },
+    "expected": "class Demo {\n    void run(String term) {\n        List<List<SObject>> a =\n        [\n            FIND :term\n            IN PHONE FIELDS\n            RETURNING\n                    Contact(\n                            Id,\n                            Name\n                            WHERE Name != null\n                            ORDER BY Name\n                            LIMIT 10\n                            OFFSET 1),\n                    Account(Id)\n            WITH SPELL_CORRECTION = false\n            LIMIT 20\n        ];\n    }\n}\n"
+  },
+  {
+    "name": "DML modes",
+    "source": "class Demo {void run(Account a) {insert as user a; update as system a;delete a;undelete a;upsert a Account.Fields.Name; merge a new Account();}}",
+    "config": {
+      "max_width": 80,
+      "indent_size": 4
+    },
+    "expected": "class Demo {\n    void run(Account a) {\n        insert as user a;\n        update as system a;\n        delete a;\n        undelete a;\n        upsert a Account.Fields.Name;\n        merge a new Account();\n    }\n}\n"
+  },
+  {
+    "name": "control flow and accessors",
+    "source": "class Demo { Object x {get;private set;} void run(Object x) {switch on x {when Account a {throw new IllegalArgumentException();} when else {return;}} for(Integer i=0;i<2;i++){if(i==1){continue;}break;} Object y=(Account)x;Boolean z=x instanceof Account;} }",
+    "config": {
+      "max_width": 80,
+      "indent_size": 4
+    },
+    "expected": "class Demo {\n    Object x { get; private set; }\n    void run(Object x) {\n        switch on x {\n                when Account a { throw new IllegalArgumentException(); }\n                when else { return; }\n        }\n        for (Integer i = 0; i < 2; i++) {\n            if (i == 1) { continue; }\n            break;\n        }\n        Object y = (Account) x;\n        Boolean z = x instanceof Account;\n    }\n}\n"
+  },
+  {
+    "name": "all trigger events",
+    "source": "trigger Demo on Account (before insert, before update, before delete, after insert, after update, after delete, after undelete) {if(Trigger.isAfter){update Trigger.new;} }",
+    "config": {
+      "max_width": 80,
+      "indent_size": 4
+    },
+    "expected": "trigger Demo on Account(\n        before insert,\n        before update,\n        before delete,\n        after insert,\n        after update,\n        after delete,\n        after undelete\n) {\n    if (Trigger.isAfter) { update Trigger.new; }\n}\n"
+  }
+]
